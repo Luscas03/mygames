@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package views;
+
 import java.sql.*;
 import dal.ConectorModule;
 import java.awt.Color;
@@ -15,60 +16,65 @@ import javax.swing.JOptionPane;
  */
 public class Login extends javax.swing.JFrame {
 //string de conexao com o banco
+
     Connection conn = null;
     //string com a query Sql
     PreparedStatement pst = null;
     //strings com o resultado da query
     ResultSet res = null;
+
     //Método de Login
-    public void userIn(){
-    String sql = "SELECT * FROM users WHERE u_email = ? AND u_password = ? AND u_status = '1';";
-    try {
-    //PREPARO DA QUERY
-        pst = conn.prepareStatement(sql);
-    //obtendo o email
-    pst.setString(1, txtEmail.getText());
-    //obtendo a senha
-    pst.setString(2, txtPassword.getText());
-    //Executar a query
-    res = pst.executeQuery();
-    if (res.next()){
-    //Abre a Janela Principal
-    //instanciar a janela principal
-    MainFrame mainframe = new MainFrame();
-    //exibe o mainframe
-    mainframe.setVisible(true);
-    //Oculta Login
-    this.dispose();
-    //Encerra a conexão com Mysql
-    conn.close();
-    
-    }else{
-        //Exibe alerta ao usuário
-    JOptionPane.showMessageDialog (null,"Ooops! E-mail e/ou Senha Inválido(s).");
+    public void userIn() {
+        String sql = "SELECT * FROM users WHERE u_email = ? AND u_password = ? AND u_status = '1';";
+        try {
+            //PREPARO DA QUERY
+            pst = conn.prepareStatement(sql);
+            //obtendo o email
+            pst.setString(1, txtEmail.getText());
+            //obtendo a senha
+            pst.setString(2, txtPassword.getText());
+            //Executar a query
+            res = pst.executeQuery();
+            if (res.next()) {
+                //Abre a Janela Principal
+                //instanciar a janela principal
+                MainFrame mainframe = new MainFrame();
+                //obtem nome do usuario e mostra em mainframe
+                MainFrame.lblUser.setText(res.getString("u_name"));
+
+//exibe o mainframe
+                mainframe.setVisible(true);
+                //Oculta Login
+                this.dispose();
+                //Encerra a conexão com Mysql
+                conn.close();
+
+            } else {
+                //Exibe alerta ao usuário
+                JOptionPane.showMessageDialog(null, "Ooops! E-mail e/ou Senha Inválido(s).");
+            }
+
+        } catch (Exception e) {
+            //se ocorrem falhas
+            JOptionPane.showMessageDialog(null, e);
+        }
     }
-    
-    
-    }catch(Exception e){
-        //se ocorrem falhas
-         JOptionPane.showMessageDialog (null, e);
-    }
-    }
+
     /**
      * Creates new form Login
      */
     public Login() {
         initComponents();
         conn = ConectorModule.conect();
-       //teste
+        //teste
         //System.out.println(conn);
-        if ( conn != null){
-        lblStatus.setText("Conectado");
-        lblStatus.setForeground(new Color(0, 128, 0));
-        btnLogin.setEnabled(true);
-        }else{
-        lblStatus.setText("Falha de conexão");
-        lblStatus.setForeground(new Color(255, 0, 0));
+        if (conn != null) {
+            lblStatus.setText("Conectado");
+            lblStatus.setForeground(new Color(0, 128, 0));
+            btnLogin.setEnabled(true);
+        } else {
+            lblStatus.setText("Falha de conexão");
+            lblStatus.setForeground(new Color(255, 0, 0));
 
         }
     }
@@ -93,20 +99,41 @@ public class Login extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("myGames - Login");
-        setPreferredSize(new java.awt.Dimension(400, 200));
+        setBackground(new java.awt.Color(255, 255, 255));
         setResizable(false);
 
+        jLabel1.setBackground(new java.awt.Color(204, 204, 204));
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel1.setText("E-mail:");
 
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel2.setText("Senha:");
 
+        txtEmail.setBackground(new java.awt.Color(204, 204, 204));
+        txtEmail.setText("lucas@gmail.com");
+        txtEmail.setDisabledTextColor(new java.awt.Color(255, 0, 0));
+        txtEmail.setName(""); // NOI18N
+        txtEmail.setSelectedTextColor(new java.awt.Color(153, 255, 255));
+        txtEmail.setSelectionColor(new java.awt.Color(255, 51, 51));
         txtEmail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtEmailActionPerformed(evt);
             }
         });
 
+        txtPassword.setBackground(new java.awt.Color(204, 204, 204));
+        txtPassword.setText("123");
+        txtPassword.setSelectedTextColor(new java.awt.Color(102, 255, 255));
+        txtPassword.setSelectionColor(new java.awt.Color(255, 51, 51));
+        txtPassword.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPasswordActionPerformed(evt);
+            }
+        });
+
+        btnLogin.setBackground(new java.awt.Color(0, 255, 0));
         btnLogin.setText("Entrar");
+        btnLogin.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnLogin.setEnabled(false);
         btnLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -116,7 +143,9 @@ public class Login extends javax.swing.JFrame {
 
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/Joystick 80x80.png"))); // NOI18N
 
+        jLabel4.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
         jLabel4.setText("Status:");
+        jLabel4.setToolTipText("");
 
         lblStatus.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         lblStatus.setForeground(new java.awt.Color(255, 0, 0));
@@ -145,7 +174,7 @@ public class Login extends javax.swing.JFrame {
                         .addComponent(lblStatus)
                         .addGap(80, 80, 80)
                         .addComponent(btnLogin)))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -166,7 +195,7 @@ public class Login extends javax.swing.JFrame {
                             .addComponent(btnLogin)
                             .addComponent(jLabel4)
                             .addComponent(lblStatus))))
-                .addContainerGap(85, Short.MAX_VALUE))
+                .addContainerGap(36, Short.MAX_VALUE))
         );
 
         setSize(new java.awt.Dimension(430, 190));
@@ -179,8 +208,12 @@ public class Login extends javax.swing.JFrame {
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
 //Executar o metodo que faz o login do usuario
-userIn();
+        userIn();
     }//GEN-LAST:event_btnLoginActionPerformed
+
+    private void txtPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPasswordActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPasswordActionPerformed
 
     /**
      * @param args the command line arguments
